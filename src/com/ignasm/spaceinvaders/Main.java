@@ -3,21 +3,23 @@ package com.ignasm.spaceinvaders;
 import com.ignasm.spaceinvaders.game.objects.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Random;
 
 public class Main extends Application {
 
-    public Pane gameWindow;
+    private Pane gameWindow;
 
     private Ship[][] ships = new Ship[6][10];
     private Ship playerShip;
@@ -27,10 +29,15 @@ public class Main extends Application {
     private final double SPACING_Y = 10;
 
     private LinkedList<ImageView> playerShots = new LinkedList<>();
+    private LinkedList<Ship> enemyShots = new LinkedList<>();
 
     private AnimationTimer animationTimer;
 
     private String direction = "-";
+
+    private int pointTracker = 0;
+
+    private Text pointText;
 
 
     @Override
@@ -51,6 +58,12 @@ public class Main extends Application {
             }
         }
 
+        pointText = new Text("Score: " + pointTracker);
+        pointText.setFont(new Font("Consolas", 30));
+        pointText.setFill(Color.WHITE);
+
+        gameWindow.getChildren().add(pointText);
+
         for (int i = 2; i < 4; i++) {
             for (int j = 0; j < ships[i].length; j++) {
                 ships[i][j] = new EnemyTwo();
@@ -65,20 +78,13 @@ public class Main extends Application {
 
         playerShip = new PlayerShip();
         gameWindow.getChildren().add(playerShip);
-        System.out.println(gameWindow.getPrefWidth());
         playerShip.setLayoutX(gameWindow.getPrefWidth() / 2);
         playerShip.setLayoutY(gameWindow.getPrefHeight() - playerShip.getShipHeight() - OFFSET_Y);
-
         gameWindow.requestFocus();
 
-        gameWindow.setOnKeyPressed(event -> {
-            direction = event.getCode().getName().toLowerCase();
-        });
+        gameWindow.setOnKeyPressed(event -> direction = event.getCode().getName().toLowerCase());
 
-
-        gameWindow.setOnKeyReleased(event -> {
-            direction = "-";
-        });
+        gameWindow.setOnKeyReleased(event -> direction = "-");
 
         double y = ships[0][0].getShipHeight() + SPACING_X;
         for (Ship[] ship : ships) {
@@ -94,7 +100,8 @@ public class Main extends Application {
 
         animationTimer = new AnimationTimer() {
             double action = 1;
-            long lastShot = 0;
+            long playerLastShot = 0;
+            long enemyLastShot = 0;
 
             @Override
             public void handle(long now) {
@@ -109,27 +116,27 @@ public class Main extends Application {
 
                 for (Ship[] ship : ships) {
                     for (Ship aShip : ship) {
-                        aShip.setLayoutX(aShip.getLayoutX() + action);
+                        if (aShip != null) {
+                            aShip.setLayoutX(aShip.getLayoutX() + action);
+                        }
                     }
                 }
 
                 switch (direction) {
                     case "a":
-                        playerShip.setLayoutX(playerShip.getLayoutX() - 1);
+                        playerShip.setLayoutX(playerShip.getLayoutX() - 3);
                         break;
                     case "d":
-                        playerShip.setLayoutX(playerShip.getLayoutX() + 1);
+                        playerShip.setLayoutX(playerShip.getLayoutX() + 3);
                         break;
+                    case "g":
                     case "space":
-                        if (now - lastShot > 1000000000) {
-                            lastShot = now;
-
+                        if (now - playerLastShot > 1000000000) {
+                            playerLastShot = now;
 
                             ImageView shot = ImageLoader.getPlayerShotImageView();
 
-
-
-                            shot.setLayoutX(playerShip.getLayoutX() - (shot.getLayoutBounds().getWidth() / 2) );
+                            shot.setLayoutX(playerShip.getLayoutX() + (shot.getLayoutBounds().getWidth() / 2) );
                             shot.setLayoutY(playerShip.getLayoutY() - playerShip.getShipHeight() - shot.getLayoutBounds().getHeight() - 5);
 
                             playerShots.add(shot);
@@ -137,26 +144,109 @@ public class Main extends Application {
                         }
                 }
 
-                for (ImageView shot : playerShots) { // Use iterator to be able to remove objects while passing through the list
-                    shot.setLayoutY(shot.getLayoutY() - 5);
-                }
+                long diff = 750000000;
 
-                for (ImageView shot : playerShots) {
+                if (now - enemyLastShot > diff) {
+                    enemyLastShot = now;
+                    Ship shot = new EnemyShotSprite();
+                    enemyShots.add(shot);
+                    gameWindow.getChildren().add(shot);
 
-                    double topLeftShotX = shot.getLayoutX();
-                    double topLeftShotY = shot.getLayoutY();
-                    Bounds shotBounds = new BoundingBox(topLeftShotX, topLeftShotY, shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
+                    Random rand = new Random();
 
-                    for (Ship[] rowShips : ships) {
-                        for (Ship ship : rowShips) {
-                            Bounds shipBounds = new BoundingBox(ship.getLayoutX(), ship.getLayoutY(), ship.getShipWidth(), ship.getShipHeight());
-                            if (shipBounds.intersects(shotBounds)) {
-                                ship.explode();
+                    mainLoop:
+                    while (true) {
+                        int col = rand.nextInt(ships[0].length);
+                        int row = ships.length - 1;
+
+                        while (row >= 0) {
+                            if (!ships[row][col].isBlownUp()) {
+                                shot.setLayoutX(ships[row][col].getLayoutX() + (ships[row][col].getShipWidth() / 2));
+                                shot.setLayoutY(ships[row][col].getLayoutY() + ships[row][col].getShipHeight());
+                                break mainLoop;
                             }
+                            row--;
                         }
                     }
                 }
 
+                ListIterator eShotIterator = enemyShots.listIterator();
+
+
+                Bounds playerShipBounds = new BoundingBox(playerShip.getLayoutX(), playerShip.getLayoutY(), playerShip.getShipWidth(), playerShip.getShipHeight());
+                while (eShotIterator.hasNext()) {
+                    ImageView shot = (ImageView) eShotIterator.next();
+                    shot.setLayoutY(shot.getLayoutY() + 3);
+                    if (shot.getLayoutY() > gameWindow.getHeight()) {
+                        eShotIterator.remove();
+                        gameWindow.getChildren().remove(shot);
+                    }
+
+                    Bounds enemyShotBounds = new BoundingBox(shot.getLayoutX(), shot.getLayoutY(), shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
+
+                    if (playerShipBounds.intersects(enemyShotBounds)) { // Game over
+                        this.stop();
+                        Text gameOver = new Text("Game Over");
+                        gameOver.setFill(Color.RED);
+                        gameOver.setFont(new Font("Consolas", 30));
+                        gameOver.setLayoutY(gameWindow.getPrefHeight() / 2);
+                        gameOver.setLayoutX((gameWindow.getPrefWidth() / 2) - (gameOver.getLayoutBounds().getWidth() / 2) );
+                        gameWindow.getChildren().add(gameOver);
+                    }
+
+                }
+
+
+                ListIterator pShotIterator = playerShots.listIterator();
+
+                while (pShotIterator.hasNext()) {
+                    ImageView shot = (ImageView) pShotIterator.next();
+                    shot.setLayoutY(shot.getLayoutY() - 5);
+                    if (shot.getLayoutY() + shot.getLayoutBounds().getHeight() < 0) {
+                        pShotIterator.remove();
+                        gameWindow.getChildren().remove(shot);
+                    }
+                }
+
+                pShotIterator = playerShots.listIterator();
+
+                while (pShotIterator.hasNext()) {
+                    ImageView shot = (ImageView) pShotIterator.next();
+                    Bounds shotBounds = new BoundingBox(shot.getLayoutX(), shot.getLayoutY(), shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
+                    boolean wasHit = false;
+
+                    startLoop:
+                    for (Ship[] rowShips : ships) {
+                        for (Ship ship : rowShips) {
+                            Bounds shipBounds = new BoundingBox(ship.getLayoutX(), ship.getLayoutY(), ship.getShipWidth(), ship.getShipHeight());
+                            if (shipBounds.intersects(shotBounds) && !ship.isBlownUp()) {
+                                ship.explode();
+                                gameWindow.getChildren().remove(ship);
+                                wasHit = true;
+                                pointTracker++;
+                                break startLoop;
+                            }
+                        }
+                    }
+
+                    if (wasHit) {
+                        pShotIterator.remove();
+                        gameWindow.getChildren().remove(shot);
+                    }
+                }
+
+                pointText.setText("Score: " + pointTracker);
+                pointText.setLayoutX(gameWindow.getPrefWidth() - pointText.getLayoutBounds().getWidth() - 10);
+                pointText.setLayoutY(pointText.getLayoutBounds().getHeight() + 5);
+
+                if (pointTracker == (ships.length * ships[0].length)) {
+                    Text winner = new Text("Winner");
+                    winner.setFont(new Font("Roboto", 30));
+                    winner.setFill(Color.GREEN);
+                    winner.setLayoutX((gameWindow.getPrefWidth() / 2) - (winner.getLayoutBounds().getWidth() / 2));
+                    winner.setLayoutY(gameWindow.getPrefHeight() / 2);
+                    gameWindow.getChildren().add(winner);
+                }
             }
         };
         animationTimer.start();

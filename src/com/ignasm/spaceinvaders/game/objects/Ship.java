@@ -21,6 +21,7 @@ public abstract class Ship extends ImageView {
     Ship(Image image, int w, int h, Duration duration) {
         this.setImage(image);
         objectAnimation = this.setupAnimation(w, h, duration);
+
         this.startAnimation();
     }
 

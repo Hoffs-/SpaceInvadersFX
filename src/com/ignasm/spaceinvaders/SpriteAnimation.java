@@ -22,6 +22,7 @@ public class SpriteAnimation extends Transition {
     private final int height;
 
     private int lastIndex;
+    private Duration realDuration;
 
     public SpriteAnimation(
             ImageView imageView,
@@ -36,6 +37,9 @@ public class SpriteAnimation extends Transition {
         this.offsetY   = offsetY;
         this.width     = width;
         this.height    = height;
+
+        imageView.setViewport(new Rectangle2D(offsetX, offsetY, width, height)); // Sets viewport for first stage
+
         setCycleDuration(duration);
         setInterpolator(Interpolator.LINEAR);
     }
@@ -48,5 +52,9 @@ public class SpriteAnimation extends Transition {
             imageView.setViewport(new Rectangle2D(x, y, width, height));
             lastIndex = index;
         }
+    }
+
+    public void startSprite() {
+        setCycleDuration(realDuration);
     }
 }
