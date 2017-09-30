@@ -42,11 +42,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        // Parent root = FXMLLoader.load(getClass().getResource("GameScreen.fxml"));
-        // primaryStage.setTitle("Space Invaders");
         gameWindow = new Pane();
         primaryStage.setScene(new Scene(gameWindow, 730, 730));
-
+        primaryStage.setTitle("Space Invaders");
         gameWindow.setPrefWidth(730);
         gameWindow.setPrefHeight(730);
 
