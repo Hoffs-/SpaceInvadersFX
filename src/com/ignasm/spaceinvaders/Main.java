@@ -1,6 +1,6 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.game.objects.*;
+import com.ignasm.spaceinvaders.objects.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.BoundingBox;
@@ -13,23 +13,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Random;
+import java.util.*;
 
 public class Main extends Application {
 
     private Pane gameWindow;
 
-    private Ship[][] ships = new Ship[6][10];
-    private Ship playerShip;
     private final double OFFSET_X = 50;
     private final double OFFSET_Y = 12;
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
-    private LinkedList<ImageView> playerShots = new LinkedList<>();
-    private LinkedList<Ship> enemyShots = new LinkedList<>();
+    private Ship[][] enemyShips = new Ship[6][10];
+    private Ship playerShip;
+    private List<ImageView> playerShots = new ArrayList<>();
+    private List<Ship> enemyShots = new ArrayList<>();
 
     private AnimationTimer animationTimer;
 
@@ -51,8 +49,8 @@ public class Main extends Application {
         gameWindow.setStyle("-fx-background-color: black");
 
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < ships[i].length; j++) {
-                ships[i][j] = new EnemyOne();
+            for (int j = 0; j < enemyShips[i].length; j++) {
+                enemyShips[i][j] = new EnemyOne();
             }
         }
 
@@ -63,14 +61,14 @@ public class Main extends Application {
         gameWindow.getChildren().add(pointText);
 
         for (int i = 2; i < 4; i++) {
-            for (int j = 0; j < ships[i].length; j++) {
-                ships[i][j] = new EnemyTwo();
+            for (int j = 0; j < enemyShips[i].length; j++) {
+                enemyShips[i][j] = new EnemyTwo();
             }
         }
 
         for (int i = 4; i < 6; i++) {
-            for (int j = 0; j < ships[i].length; j++) {
-                ships[i][j] = new EnemyThree();
+            for (int j = 0; j < enemyShips[i].length; j++) {
+                enemyShips[i][j] = new EnemyThree();
             }
         }
 
@@ -84,8 +82,8 @@ public class Main extends Application {
 
         gameWindow.setOnKeyReleased(event -> direction = "-");
 
-        double y = ships[0][0].getShipHeight() + SPACING_X;
-        for (Ship[] ship : ships) {
+        double y = enemyShips[0][0].getShipHeight() + SPACING_X;
+        for (Ship[] ship : enemyShips) {
             double x = OFFSET_X;
             for (Ship aShip : ship) {
                 aShip.setLayoutX(x);
@@ -104,15 +102,15 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
 
-                if (ships[0][ships[0].length - 1].getShipWidth() + ships[0][ships[0].length - 1].getLayoutX() >= gameWindow.getWidth()) {
+                if (enemyShips[0][enemyShips[0].length - 1].getShipWidth() + enemyShips[0][enemyShips[0].length - 1].getLayoutX() >= gameWindow.getWidth()) {
                     action = -1;
                 }
 
-                if (ships[0][0].getLayoutX() <= 0) {
+                if (enemyShips[0][0].getLayoutX() <= 0) {
                     action = 1;
                 }
 
-                for (Ship[] ship : ships) {
+                for (Ship[] ship : enemyShips) {
                     for (Ship aShip : ship) {
                         if (aShip != null) {
                             aShip.setLayoutX(aShip.getLayoutX() + action);
@@ -154,13 +152,13 @@ public class Main extends Application {
 
                     mainLoop:
                     while (true) {
-                        int col = rand.nextInt(ships[0].length);
-                        int row = ships.length - 1;
+                        int col = rand.nextInt(enemyShips[0].length);
+                        int row = enemyShips.length - 1;
 
                         while (row >= 0) {
-                            if (!ships[row][col].isBlownUp()) {
-                                shot.setLayoutX(ships[row][col].getLayoutX() + (ships[row][col].getShipWidth() / 2));
-                                shot.setLayoutY(ships[row][col].getLayoutY() + ships[row][col].getShipHeight());
+                            if (!enemyShips[row][col].isBlownUp()) {
+                                shot.setLayoutX(enemyShips[row][col].getLayoutX() + (enemyShips[row][col].getShipWidth() / 2));
+                                shot.setLayoutY(enemyShips[row][col].getLayoutY() + enemyShips[row][col].getShipHeight());
                                 break mainLoop;
                             }
                             row--;
@@ -214,7 +212,7 @@ public class Main extends Application {
                     boolean wasHit = false;
 
                     startLoop:
-                    for (Ship[] rowShips : ships) {
+                    for (Ship[] rowShips : enemyShips) {
                         for (Ship ship : rowShips) {
                             Bounds shipBounds = new BoundingBox(ship.getLayoutX(), ship.getLayoutY(), ship.getShipWidth(), ship.getShipHeight());
                             if (shipBounds.intersects(shotBounds) && !ship.isBlownUp()) {
@@ -237,7 +235,7 @@ public class Main extends Application {
                 pointText.setLayoutX(gameWindow.getPrefWidth() - pointText.getLayoutBounds().getWidth() - 10);
                 pointText.setLayoutY(pointText.getLayoutBounds().getHeight() + 5);
 
-                if (pointTracker == (ships.length * ships[0].length)) {
+                if (pointTracker == (enemyShips.length * enemyShips[0].length)) {
                     Text winner = new Text("Winner");
                     winner.setFont(new Font("Roboto", 30));
                     winner.setFill(Color.GREEN);

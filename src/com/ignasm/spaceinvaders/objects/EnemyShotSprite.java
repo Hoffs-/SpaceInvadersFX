@@ -1,4 +1,4 @@
-package com.ignasm.spaceinvaders.game.objects;
+package com.ignasm.spaceinvaders.objects;
 
 import com.ignasm.spaceinvaders.ImageLoader;
 import javafx.util.Duration;

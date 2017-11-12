@@ -39,7 +39,6 @@ public class SpriteAnimation extends Transition {
         this.height    = height;
 
         imageView.setViewport(new Rectangle2D(offsetX, offsetY, width, height)); // Sets viewport for first stage
-
         setCycleDuration(duration);
         setInterpolator(Interpolator.LINEAR);
     }

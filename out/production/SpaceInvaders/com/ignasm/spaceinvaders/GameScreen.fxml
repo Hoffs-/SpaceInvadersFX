@@ -1,2 +1,0 @@
-<?import javafx.scene.layout.Pane?>
-<Pane fx:id="gameWindow" fx:controller="com.ignasm.spaceinvaders.Controller" xmlns:fx="http://javafx.com/fxml" onKeyPressed="#doSomething" />
