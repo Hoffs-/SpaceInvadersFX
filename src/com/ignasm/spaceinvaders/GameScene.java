@@ -1,16 +1,26 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.objects.Ship;
-import javafx.scene.image.ImageView;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.ignasm.spaceinvaders.objects.EnemyShot;
+import com.ignasm.spaceinvaders.objects.PlayerShot;
+import com.ignasm.spaceinvaders.objects.ShipEntity;
+import javafx.scene.layout.Pane;
 
 public class GameScene {
-    private Ship[][] enemyShips = new Ship[6][10];
-    private Ship playerShip;
-    private List<ImageView> playerShots = new ArrayList<>();
-    private List<Ship> enemyShots = new ArrayList<>();
+    private Pane window;
+    private ShipEntity[][] enemyEntities; // [6][10]
+    private ShipEntity playerEntity;
+
+    private ObjectPool<PlayerShot> playShots;
+    private ObjectPool<EnemyShot> enemyShots;
+
+    private ObjectPool<ShipEntity> ships;
+
+    public GameScene(Pane gameWindow, ShipEntity[][] enemies, ShipEntity player) {
+        window = gameWindow;
+        enemyEntities = enemies;
+        playerEntity = player;
+    }
+
 
 
 }
