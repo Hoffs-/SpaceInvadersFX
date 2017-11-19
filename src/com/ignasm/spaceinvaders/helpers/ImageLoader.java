@@ -1,7 +1,6 @@
-package com.ignasm.spaceinvaders.objects;
+package com.ignasm.spaceinvaders.helpers;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 
 /**

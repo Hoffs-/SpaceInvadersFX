@@ -1,6 +1,6 @@
 package com.ignasm.spaceinvaders.objects;
 
-import com.ignasm.spaceinvaders.ImageLoader;
+import com.ignasm.spaceinvaders.helpers.ImageLoader;
 import javafx.util.Duration;
 
 /**
@@ -8,10 +8,12 @@ import javafx.util.Duration;
  * 20153209
  * PRIf-15/1
  */
-public class EnemyThree extends Ship {
+public class EnemyThree extends ShipEntity {
     public EnemyThree() {
-        super(ImageLoader.getAlien3ImageView().getImage(),
+        super(
+                ImageLoader.getAlienThree(),
                 54, 36,
-                Duration.millis(1000));
+                Duration.millis(1000)
+        );
     }
 }

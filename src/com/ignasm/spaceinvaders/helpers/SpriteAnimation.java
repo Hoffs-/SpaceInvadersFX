@@ -1,4 +1,4 @@
-package com.ignasm.spaceinvaders;
+package com.ignasm.spaceinvaders.helpers;
 
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;

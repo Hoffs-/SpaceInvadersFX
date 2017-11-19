@@ -1,6 +1,6 @@
 package com.ignasm.spaceinvaders.objects;
 
-import com.ignasm.spaceinvaders.ImageLoader;
+import com.ignasm.spaceinvaders.helpers.ImageLoader;
 import javafx.util.Duration;
 
 /**
@@ -8,10 +8,12 @@ import javafx.util.Duration;
  * 20153209
  * PRIf-15/1
  */
-public class PlayerShip extends Ship {
+public class PlayerShip extends ShipEntity {
     public PlayerShip() {
-        super(ImageLoader.getPlayerImageView().getImage(),
+        super(
+                ImageLoader.getPlayer(),
                 51, 36,
-                Duration.millis(1000));
+                Duration.millis(1000)
+        );
     }
 }

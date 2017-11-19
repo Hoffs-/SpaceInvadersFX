@@ -1,6 +1,6 @@
 package com.ignasm.spaceinvaders.objects;
 
-import com.ignasm.spaceinvaders.ImageLoader;
+import com.ignasm.spaceinvaders.helpers.ImageLoader;
 import javafx.util.Duration;
 
 /**
@@ -8,9 +8,9 @@ import javafx.util.Duration;
  * 20153209
  * PRIf-15/1
  */
-public class EnemyShotSprite extends Ship {
-    public EnemyShotSprite() {
-        super(ImageLoader.getEnemyShotImageView().getImage(),
+public class EnemyShot extends Entity {
+    public EnemyShot() {
+        super(ImageLoader.getEnemyShot(),
                 10, 20,
                 Duration.millis(1000));
     }
