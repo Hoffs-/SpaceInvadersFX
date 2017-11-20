@@ -1,4 +1,4 @@
-package com.ignasm.spaceinvaders.objects;
+package com.ignasm.spaceinvaders.entities;
 
 import com.ignasm.spaceinvaders.helpers.SpriteAnimation;
 import javafx.animation.Animation;
@@ -15,15 +15,22 @@ import javafx.util.Duration;
  */
 public class Entity extends ImageView {
     private Animation objectAnimation;
-    private double entityWidth;
-    private double entityHeight;
+    private Duration animationDuration;
+    private int entityWidth;
+    private int entityHeight;
 
-    Entity(Image image, int w, int h, Duration duration) {
+    public Entity(Image image, int w, int h, Duration duration) {
         setImage(image);
         entityWidth = w;
         entityHeight = h;
+        animationDuration = duration;
+
         objectAnimation = setupAnimation(w, h, duration);
         startAnimation();
+    }
+
+    public Duration getAnimationDuration() {
+        return animationDuration;
     }
 
     private Animation setupAnimation(int width, int height, Duration duration) {
@@ -61,11 +68,11 @@ public class Entity extends ImageView {
         }
     }
 
-    public double getEntityWidth() {
+    public int getEntityWidth() {
         return entityWidth;
     }
 
-    public double getEntityHeight() {
+    public int getEntityHeight() {
         return entityHeight;
     }
 
@@ -75,5 +82,13 @@ public class Entity extends ImageView {
                 bounds.getMaxY() < 0 ||
                 bounds.getMinX() > window.getWidth() ||
                 bounds.getMinY() > window.getHeight();
+    }
+
+    public void moveX(int move) {
+        setLayoutX(getLayoutX() + move);
+    }
+
+    public void moveY(int move) {
+        setLayoutY(getLayoutY() + move);
     }
 }

@@ -1,7 +1,7 @@
-package com.ignasm.spaceinvaders.objects;
+package com.ignasm.spaceinvaders.entities;
 
 import com.ignasm.spaceinvaders.helpers.ImageLoader;
-import com.ignasm.spaceinvaders.objects.interfaces.Explosive;
+import com.ignasm.spaceinvaders.entities.interfaces.Explosive;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 

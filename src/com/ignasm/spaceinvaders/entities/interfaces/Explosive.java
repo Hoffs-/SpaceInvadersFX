@@ -1,4 +1,4 @@
-package com.ignasm.spaceinvaders.objects.interfaces;
+package com.ignasm.spaceinvaders.entities.interfaces;
 
 /**
  * Ignas Maslinskas
