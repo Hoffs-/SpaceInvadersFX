@@ -1,27 +1,37 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.objects.Entity;
-
 /**
  * Ignas Maslinskas
  * 20153209
  * PRIf-15/1
  */
-public abstract class ObjectPool<T extends Entity> {
-    protected final FixedLinkedList<T> objects;
-    private final int poolSize;
+public abstract class ObjectPool<T> {
+    private final FixedLinkedList<T> releasedObjects;
+    private final FixedLinkedList<T> activeObjects;
 
+    private final int poolSize;
     public ObjectPool(int size) {
         poolSize = size;
-        objects = new FixedLinkedList<>(size);
+        releasedObjects = new FixedLinkedList<>(size);
+        activeObjects = new FixedLinkedList<>(size);
     }
 
     abstract public T acquireObject();
 
-    abstract public T createObject();
+    abstract public void releaseObject(T object);
+
+    abstract protected T createObject();
 
     public int getObjectCount() {
-        return objects.size();
+        return releasedObjects.size() + activeObjects.size();
+    }
+
+    public FixedLinkedList<T> getActiveObjects() {
+        return activeObjects;
+    }
+
+    public FixedLinkedList<T> getReleasedObjects() {
+        return releasedObjects;
     }
 
     public int getPoolSize() {
