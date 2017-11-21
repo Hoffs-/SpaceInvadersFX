@@ -1,6 +1,7 @@
 package com.ignasm.spaceinvaders;
 
 import com.ignasm.spaceinvaders.helpers.MovementDirection;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,11 @@ public class InputHandler {
 
     public static InputHandler getInstance() {
         return instance;
+    }
+
+    public static void setHandlers(Node context) {
+        context.setOnKeyPressed(getInstance()::keyDownHandler);
+        context.setOnKeyReleased(getInstance()::keyUpHandler);
     }
 
     public void keyDownHandler(KeyEvent event) {

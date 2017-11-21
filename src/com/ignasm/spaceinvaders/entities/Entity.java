@@ -91,4 +91,9 @@ public class Entity extends ImageView {
     public void moveY(int move) {
         setLayoutY(getLayoutY() + move);
     }
+
+    public void setPosition(double x, double y) {
+        setLayoutX(x);
+        setLayoutY(y);
+    }
 }

@@ -53,6 +53,10 @@ public class ImageLoader {
     }
 
     private static Image loadImage(String image) {
-        return new Image(String.format("com/ignasm/spaceinvaders/resources/%s.png", image));
+        return new Image(
+                ImageLoader.class.getResourceAsStream(
+                        String.format("/com/ignasm/spaceinvaders/resources/%s.png", image)
+                )
+        );
     }
 }

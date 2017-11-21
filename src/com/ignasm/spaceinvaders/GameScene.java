@@ -24,11 +24,31 @@ public class GameScene {
         enemyShots = new ShotPool(new EnemyShot(), 100, window);
     }
 
+    public Pane getWindow() {
+        return window;
+    }
+
     public ShotPool getPlayerShots() {
         return playerShots;
     }
 
     public ShotPool getEnemyShots() {
         return enemyShots;
+    }
+
+    public ShipEntity[][] getEnemyEntities() {
+        return enemyEntities;
+    }
+
+    public ShipEntity getPlayerEntity() {
+        return playerEntity;
+    }
+
+    public int getEnemyRows() {
+        return enemyEntities.length;
+    }
+
+    public int getEnemyColumns() {
+        return (enemyEntities.length > 0) ? enemyEntities[0].length : 0;
     }
 }
