@@ -21,7 +21,7 @@ public class InputHandler {
     private LocalDateTime pressedRight = LocalDateTime.now();
     private boolean isMovingRight = false;
 
-    private InputHandler(){};
+    private InputHandler(){}
 
     public static InputHandler getInstance() {
         return instance;
@@ -62,7 +62,7 @@ public class InputHandler {
         }
     }
 
-    public boolean getIsShooting() {
+    public boolean isShooting() {
         return isShooting;
     }
 

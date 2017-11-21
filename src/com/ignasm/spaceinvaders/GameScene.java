@@ -36,11 +36,11 @@ public class GameScene {
         return enemyShots;
     }
 
-    public ShipEntity[][] getEnemyEntities() {
+    public ShipEntity[][] getEnemies() {
         return enemyEntities;
     }
 
-    public ShipEntity getPlayerEntity() {
+    public ShipEntity getPlayer() {
         return playerEntity;
     }
 
@@ -51,4 +51,9 @@ public class GameScene {
     public int getEnemyColumns() {
         return (enemyEntities.length > 0) ? enemyEntities[0].length : 0;
     }
+
+    /*
+    public static void spaceOutEnemies(Entity[][]) {
+
+    }*/
 }

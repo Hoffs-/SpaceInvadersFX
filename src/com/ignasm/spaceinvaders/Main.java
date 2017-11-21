@@ -1,19 +1,16 @@
 package com.ignasm.spaceinvaders;
 
 import com.ignasm.spaceinvaders.entities.*;
-import com.ignasm.spaceinvaders.entities.Entity;
-import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -38,12 +35,21 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         gameWindow = new Pane();
+
+        primaryStage.setScene(new Scene(gameWindow, 730, 730));
+        primaryStage.setTitle("Space Invaders");
+
         gameWindow.setStyle("-fx-background-color: black");
+        gameWindow.prefWidthProperty().bind(primaryStage.getScene().widthProperty());
+        gameWindow.prefHeightProperty().bind(primaryStage.getScene().heightProperty());
 
-        ShipEntity[][] enemyEntities = getEnemyShipEntities();
+
         playerEntity = new PlayerShip();
-
         playerEntity.setPosition(gameWindow.getPrefWidth() / 2, gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
+
+
+        System.out.println(playerEntity.getLayoutX());
+        System.out.println(playerEntity.getLayoutY());
 
         gameWindow.getChildren().add(playerEntity);
 
@@ -51,6 +57,7 @@ public class Main extends Application {
         gameWindow.requestFocus();
         InputHandler.setHandlers(gameWindow);
 
+        ShipEntity[][] enemyEntities = getEnemyShipEntities();
         double y = enemyEntities[0][0].getEntityHeight() + SPACING_Y;
         for (ShipEntity[] entity : enemyEntities) {
             double x = OFFSET_X;
@@ -68,11 +75,8 @@ public class Main extends Application {
         GameRenderer gameRenderer = new GameRenderer(scene);
         gameRenderer.start();
 
-        primaryStage.setScene(new Scene(gameWindow, 730, 730));
-        primaryStage.setTitle("Space Invaders");
+
         primaryStage.show();
-        gameWindow.prefWidthProperty().bind(primaryStage.getScene().widthProperty());
-        gameWindow.prefHeightProperty().bind(primaryStage.getScene().heightProperty());
     }
 
 

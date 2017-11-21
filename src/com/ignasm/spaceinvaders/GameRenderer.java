@@ -1,7 +1,5 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.entities.EnemyShot;
-import com.ignasm.spaceinvaders.entities.PlayerShot;
 import com.ignasm.spaceinvaders.entities.Entity;
 import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.animation.AnimationTimer;
@@ -15,21 +13,18 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Random;
 
 public class GameRenderer extends AnimationTimer {
     private static final int SHOT_SPEED = 3;
-    private static final int PLAYER_SHOT_INTERVAL = 1000000000;
-    private static final long ENEMY_SHOT_INTERVAL = 750000000;
-    
-    private double action = 1;
+    private static final long PLAYER_SHOT_INTERVAL = 1_000_000_000;
+    private static final long ENEMY_SHOT_INTERVAL = 750_000_000;
+
+    private int direction = 1;
     private long playerLastShot = 0;
     private long enemyLastShot = 0;
 
     private Pane gameWindow;
-
-    private String userInput = "-";
 
     private int pointTracker = 0;
 
@@ -43,7 +38,6 @@ public class GameRenderer extends AnimationTimer {
     private final double SPACING_Y = 10;
 
     // private ShipEntity[][] enemyEntities = new ShipEntity[6][10];
-    private Entity playerEntity;
     private List<Entity> playerShots = new ArrayList<>();
     private List<Entity> enemyShots = new ArrayList<>();
 
@@ -62,8 +56,7 @@ public class GameRenderer extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        action = getMovementDirection();
-        moveEnemyShips();
+        moveEnemyShips(getMovementDirection());
 
         handleUserAction(now);
 
@@ -104,60 +97,51 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private boolean checkEnemyHit(ImageView shot) {
-        Bounds playerShipBounds = new BoundingBox(playerEntity.getLayoutX(), playerEntity.getLayoutY(), playerEntity.getEntityWidth(), playerEntity.getEntityHeight());
+        Entity player = gameScene.getPlayer();
+        Bounds playerShipBounds = new BoundingBox(player.getLayoutX(), player.getLayoutY(), player.getEntityWidth(), player.getEntityHeight());
         Bounds enemyShotBounds = new BoundingBox(shot.getLayoutX(), shot.getLayoutY(), shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
         return playerShipBounds.intersects(enemyShotBounds);
     }
 
     private void handleUserAction(long now) {
-        switch (userInput) {
-            case "a":
-                playerEntity.setLayoutX(playerEntity.getLayoutX() - 3);
-                break;
-            case "d":
-                playerEntity.setLayoutX(playerEntity.getLayoutX() + 3);
-                break;
-            case "g":
-            case "space":
-                if (now - playerLastShot > PLAYER_SHOT_INTERVAL) {
-                    playerLastShot = now;
-                    addPlayerShot();
-                }
+        int playerMove = InputHandler.getInstance().getMovementDirection().getValue() * 3;
+        gameScene.getPlayer().moveX(playerMove);
+
+        if (InputHandler.getInstance().isShooting() && canShoot(now)) {
+            playerLastShot = now;
+            addPlayerShot();
         }
     }
 
+    private boolean canShoot(long now) {
+        return now - playerLastShot > PLAYER_SHOT_INTERVAL;
+    }
+
     private void addPlayerShot() {
-        Entity shot = new PlayerShot();
-
-        shot.setLayoutX(playerEntity.getLayoutX() + (shot.getLayoutBounds().getWidth() / 2) );
-        shot.setLayoutY(playerEntity.getLayoutY() - playerEntity.getEntityHeight() - shot.getLayoutBounds().getHeight() - 5);
-
-        playerShots.add(shot);
-        gameWindow.getChildren().add(shot);
+        ShipEntity player = gameScene.getPlayer();
+        Entity shot = gameScene.getPlayerShots().acquireObject();
+        shot.setPosition(player.getMiddleX() - (shot.getEntityWidth() / 2), player.getLayoutY() - shot.getEntityHeight());
     }
 
     private void addEnemyShot() {
-        ShipEntity[][] enemyEntities = gameScene.getEnemyEntities();
-
-        Entity shot = new EnemyShot();
-        enemyShots.add(shot);
-        gameWindow.getChildren().add(shot);
+        ShipEntity[][] enemies = gameScene.getEnemies();
+        Entity shot = gameScene.getEnemyShots().acquireObject();
 
         Random rand = new Random();
 
         boolean shouldContinue = true;
         while (shouldContinue) {
-            int col = rand.nextInt(enemyEntities[0].length);
-            int row = enemyEntities.length - 1;
+            int col = rand.nextInt(enemies[0].length);
+            int row = enemies.length - 1;
 
-            while (row >= 0) {
-                if (!enemyEntities[row][col].isBlownUp()) {
-                    shot.setLayoutX(enemyEntities[row][col].getLayoutX() + (enemyEntities[row][col].getEntityWidth() / 2));
-                    shot.setLayoutY(enemyEntities[row][col].getLayoutY() + enemyEntities[row][col].getEntityHeight());
+            for (int i = row; i >= 0; i--) {
+                ShipEntity enemy = enemies[row][col];
+
+                if (!enemy.isBlownUp()) {
+                    shot.setPosition(enemy.getMiddleX() - (shot.getEntityWidth() / 2), enemy.getLayoutY() + enemy.getEntityHeight());
                     shouldContinue = false;
                     break;
                 }
-                row--;
             }
         }
     }
@@ -178,6 +162,7 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private void checkPlayerShots() {
+        /*
         ListIterator pShotIterator = playerShots.listIterator();
         while (pShotIterator.hasNext()) {
             Entity shot = (Entity) pShotIterator.next();
@@ -185,7 +170,7 @@ public class GameRenderer extends AnimationTimer {
             boolean wasHit = false;
 
             startLoop:
-            for (ShipEntity[] rowEntities : gameScene.getEnemyEntities()) {
+            for (ShipEntity[] rowEntities : gameScene.getEnemies()) {
                 for (ShipEntity entity : rowEntities) {
                     Bounds shipBounds = new BoundingBox(entity.getLayoutX(), entity.getLayoutY(), entity.getEntityWidth(), entity.getEntityHeight());
                     if (shipBounds.intersects(shotBounds) && !entity.isBlownUp()) {
@@ -202,7 +187,7 @@ public class GameRenderer extends AnimationTimer {
                 pShotIterator.remove();
                 gameWindow.getChildren().remove(shot);
             }
-        }
+        }*/
     }
 
     private void updatePlayerShots() {
@@ -210,18 +195,21 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private int getMovementDirection() {
-        if (gameScene.getEnemyEntities()[gameScene.getEnemyRows() - 1][gameScene.getEnemyColumns() - 1].getLayoutBounds().getMaxX() >= gameWindow.getWidth()) {
-            return -1;
-        } else {
-            return 1;
+        ShipEntity firstShip = gameScene.getEnemies()[0][0];
+        ShipEntity lastShip = gameScene.getEnemies()[gameScene.getEnemyRows() - 1][gameScene.getEnemyColumns() - 1];
+
+        if (firstShip.getMinX() <= 0 || lastShip.getMaxX() >= gameWindow.getWidth()) {
+            direction *= -1;
         }
+
+        return direction;
     }
 
-    private void moveEnemyShips() {
-        for (ShipEntity[] entity : gameScene.getEnemyEntities()) {
+    private void moveEnemyShips(int direction) {
+        for (ShipEntity[] entity : gameScene.getEnemies()) {
             for (ShipEntity aEntity : entity) {
                 if (aEntity != null) {
-                    aEntity.setLayoutX(aEntity.getLayoutX() + action);
+                    aEntity.setLayoutX(aEntity.getLayoutX() + direction);
                 }
             }
         }

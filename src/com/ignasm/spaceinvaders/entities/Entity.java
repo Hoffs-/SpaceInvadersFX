@@ -96,4 +96,16 @@ public class Entity extends ImageView {
         setLayoutX(x);
         setLayoutY(y);
     }
+
+    public double getMaxX() {
+        return getLayoutX() + getEntityWidth();
+    }
+
+    public double getMinX() {
+        return getLayoutX();
+    }
+
+    public double getMiddleX() {
+        return getLayoutX() + (getEntityWidth() / 2);
+    }
 }
