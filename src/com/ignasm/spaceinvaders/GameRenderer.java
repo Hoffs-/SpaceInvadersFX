@@ -1,9 +1,9 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.objects.EnemyShot;
-import com.ignasm.spaceinvaders.objects.PlayerShot;
-import com.ignasm.spaceinvaders.objects.Entity;
-import com.ignasm.spaceinvaders.objects.ShipEntity;
+import com.ignasm.spaceinvaders.entities.EnemyShot;
+import com.ignasm.spaceinvaders.entities.PlayerShot;
+import com.ignasm.spaceinvaders.entities.Entity;
+import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -33,7 +33,7 @@ public class GameRenderer extends AnimationTimer {
 
     private int pointTracker = 0;
 
-    private Text pointText;
+    private Text pointText = new Text();
 
     private GameScene gameScene;
 
@@ -42,13 +42,22 @@ public class GameRenderer extends AnimationTimer {
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
-    private ShipEntity[][] enemyEntities = new ShipEntity[6][10];
+    // private ShipEntity[][] enemyEntities = new ShipEntity[6][10];
     private Entity playerEntity;
     private List<Entity> playerShots = new ArrayList<>();
     private List<Entity> enemyShots = new ArrayList<>();
 
     public GameRenderer(GameScene gameScene) {
         this.gameScene = gameScene;
+        this.gameWindow = gameScene.getWindow();
+        setupPointText();
+    }
+
+    private void setupPointText() {
+        pointText = new Text("Score: " + pointTracker);
+        pointText.setFont(new Font("Consolas", 30));
+        pointText.setFill(Color.WHITE);
+        gameWindow.getChildren().add(pointText);
     }
 
     @Override
@@ -67,32 +76,26 @@ public class GameRenderer extends AnimationTimer {
 
 
         updatePlayerShots();
-        checkPlayerShots();
+        // checkPlayerShots();
 
         updateScore();
 
+        /*
         if (pointTracker == (enemyEntities.length * enemyEntities[0].length)) {
             setGameOverText();
         }
+        */
     }
 
     private void updateEnemyShots() {
-        ListIterator eShotIterator = enemyShots.listIterator();
-        while (eShotIterator.hasNext()) {
-            ImageView shot = (ImageView) eShotIterator.next();
-            shot.setLayoutY(shot.getLayoutY() + SHOT_SPEED);
+        gameScene.getEnemyShots().moveShots(SHOT_SPEED);
 
-            if (isOutOfBounds(shot)) {
-                eShotIterator.remove();
-                gameWindow.getChildren().remove(shot);
-            }
-
-
-            if (checkEnemyHit(shot)) { // Game over
-                setGameOverText();
-                this.stop();
-            }
+        /*
+        if (checkEnemyHit(shot)) { // Game over
+            setGameOverText();
+            this.stop();
         }
+        */
     }
 
     private boolean isOutOfBounds(ImageView object) {
@@ -134,6 +137,8 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private void addEnemyShot() {
+        ShipEntity[][] enemyEntities = gameScene.getEnemyEntities();
+
         Entity shot = new EnemyShot();
         enemyShots.add(shot);
         gameWindow.getChildren().add(shot);
@@ -180,7 +185,7 @@ public class GameRenderer extends AnimationTimer {
             boolean wasHit = false;
 
             startLoop:
-            for (ShipEntity[] rowEntities : enemyEntities) {
+            for (ShipEntity[] rowEntities : gameScene.getEnemyEntities()) {
                 for (ShipEntity entity : rowEntities) {
                     Bounds shipBounds = new BoundingBox(entity.getLayoutX(), entity.getLayoutY(), entity.getEntityWidth(), entity.getEntityHeight());
                     if (shipBounds.intersects(shotBounds) && !entity.isBlownUp()) {
@@ -201,20 +206,11 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private void updatePlayerShots() {
-        ListIterator pShotIterator = playerShots.listIterator();
-
-        while (pShotIterator.hasNext()) {
-            Entity shot = (Entity) pShotIterator.next();
-            shot.setLayoutY(shot.getLayoutY() - SHOT_SPEED);
-            if (isOutOfBounds(shot)) {
-                pShotIterator.remove();
-                gameWindow.getChildren().remove(shot);
-            }
-        }
+        gameScene.getPlayerShots().moveShots(-1 * SHOT_SPEED);
     }
 
     private int getMovementDirection() {
-        if (enemyEntities[0][enemyEntities[0].length - 1].getEntityWidth() + enemyEntities[0][enemyEntities[0].length - 1].getLayoutX() >= gameWindow.getWidth()) {
+        if (gameScene.getEnemyEntities()[gameScene.getEnemyRows() - 1][gameScene.getEnemyColumns() - 1].getLayoutBounds().getMaxX() >= gameWindow.getWidth()) {
             return -1;
         } else {
             return 1;
@@ -222,7 +218,7 @@ public class GameRenderer extends AnimationTimer {
     }
 
     private void moveEnemyShips() {
-        for (ShipEntity[] entity : enemyEntities) {
+        for (ShipEntity[] entity : gameScene.getEnemyEntities()) {
             for (ShipEntity aEntity : entity) {
                 if (aEntity != null) {
                     aEntity.setLayoutX(aEntity.getLayoutX() + action);

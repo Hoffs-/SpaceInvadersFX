@@ -1,8 +1,8 @@
 package com.ignasm.spaceinvaders;
 
-import com.ignasm.spaceinvaders.objects.*;
-import com.ignasm.spaceinvaders.objects.Entity;
-import com.ignasm.spaceinvaders.objects.ShipEntity;
+import com.ignasm.spaceinvaders.entities.*;
+import com.ignasm.spaceinvaders.entities.Entity;
+import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -24,7 +24,6 @@ public class Main extends Application {
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
-    private ShipEntity[][] enemyEntities = new ShipEntity[6][10];
     private ShipEntity playerEntity;
     private List<ImageView> playerShots = new ArrayList<>();
     private List<Entity> enemyShots = new ArrayList<>();
@@ -38,27 +37,54 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        gameWindow = new Pane();
+        gameWindow.setStyle("-fx-background-color: black");
+
+        ShipEntity[][] enemyEntities = getEnemyShipEntities();
+        playerEntity = new PlayerShip();
+
+        playerEntity.setPosition(gameWindow.getPrefWidth() / 2, gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
+
+        gameWindow.getChildren().add(playerEntity);
+
+
+        gameWindow.requestFocus();
+        InputHandler.setHandlers(gameWindow);
+
+        double y = enemyEntities[0][0].getEntityHeight() + SPACING_Y;
+        for (ShipEntity[] entity : enemyEntities) {
+            double x = OFFSET_X;
+            for (ShipEntity aEntity : entity) {
+                aEntity.setLayoutX(x);
+                aEntity.setLayoutY(y);
+                gameWindow.getChildren().add(aEntity);
+                x += aEntity.getEntityWidth() + SPACING_X;
+            }
+            y += entity[0].getEntityHeight() + SPACING_Y;
+        }
+
+        GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity);
+
+        GameRenderer gameRenderer = new GameRenderer(scene);
+        gameRenderer.start();
+
         primaryStage.setScene(new Scene(gameWindow, 730, 730));
         primaryStage.setTitle("Space Invaders");
         primaryStage.show();
-
-
-        gameWindow = new Pane();
         gameWindow.prefWidthProperty().bind(primaryStage.getScene().widthProperty());
         gameWindow.prefHeightProperty().bind(primaryStage.getScene().heightProperty());
-        gameWindow.setStyle("-fx-background-color: black");
+    }
+
+
+
+    private ShipEntity[][] getEnemyShipEntities() {
+        ShipEntity[][] enemyEntities = new ShipEntity[6][10];
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < enemyEntities[i].length; j++) {
                 enemyEntities[i][j] = new EnemyOne();
             }
         }
-
-        pointText = new Text("Score: " + pointTracker);
-        pointText.setFont(new Font("Consolas", 30));
-        pointText.setFill(Color.WHITE);
-
-        gameWindow.getChildren().add(pointText);
 
         for (int i = 2; i < 4; i++) {
             for (int j = 0; j < enemyEntities[i].length; j++) {
@@ -71,33 +97,7 @@ public class Main extends Application {
                 enemyEntities[i][j] = new EnemyThree();
             }
         }
-
-        playerEntity = new PlayerShip();
-        gameWindow.getChildren().add(playerEntity);
-        playerEntity.setLayoutX(gameWindow.getPrefWidth() / 2);
-        playerEntity.setLayoutY(gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
-        gameWindow.requestFocus();
-
-        gameWindow.setOnKeyPressed(event -> direction = event.getCode().getName().toLowerCase());
-        gameWindow.setOnKeyReleased(event -> direction = "-");
-
-        gameWindow.setOnKeyPressed(InputHandler.getInstance()::keyDownHandler);
-        gameWindow.setOnKeyReleased(InputHandler.getInstance()::keyUpHandler);
-
-
-        double y = enemyEntities[0][0].getEntityHeight() + SPACING_X;
-        for (ShipEntity[] entity : enemyEntities) {
-            double x = OFFSET_X;
-            for (ShipEntity aEntity : entity) {
-                aEntity.setLayoutX(x);
-                aEntity.setLayoutY(y);
-                gameWindow.getChildren().add(aEntity);
-                x += aEntity.getEntityWidth() + SPACING_X;
-            }
-            y += entity[0].getEntityHeight() + SPACING_Y;
-        }
-
-
+        return enemyEntities;
     }
 
 
