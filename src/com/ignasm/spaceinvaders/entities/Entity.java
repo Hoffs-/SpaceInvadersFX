@@ -2,7 +2,6 @@ package com.ignasm.spaceinvaders.entities;
 
 import com.ignasm.spaceinvaders.helpers.SpriteAnimation;
 import javafx.animation.Animation;
-import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -77,11 +76,10 @@ public class Entity extends ImageView {
     }
 
     public boolean isOutOfBounds(Pane window) {
-        Bounds bounds = getLayoutBounds();
-        return bounds.getMaxX() < 0 ||
-                bounds.getMaxY() < 0 ||
-                bounds.getMinX() > window.getWidth() ||
-                bounds.getMinY() > window.getHeight();
+        return getMaxX() < 0 ||
+                getLayoutY() + getEntityWidth() < 0 ||
+                getLayoutX() > window.getWidth() ||
+                getLayoutY() > window.getHeight();
     }
 
     public void moveX(int move) {
