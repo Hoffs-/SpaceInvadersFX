@@ -1,40 +1,21 @@
 package com.ignasm.spaceinvaders;
 
 import com.ignasm.spaceinvaders.entities.*;
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main extends Application {
-
-    private Pane gameWindow;
-
     private final double OFFSET_X = 50;
     private final double OFFSET_Y = 12;
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
-    private ShipEntity playerEntity;
-    private List<ImageView> playerShots = new ArrayList<>();
-    private List<Entity> enemyShots = new ArrayList<>();
-
-    private AnimationTimer animationTimer;
-
-    private int pointTracker = 0;
-
-    private Text pointText;
-    private String direction = "-";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        gameWindow = new Pane();
+        Pane gameWindow = new Pane();
 
         primaryStage.setScene(new Scene(gameWindow, 730, 730));
         primaryStage.setTitle("Space Invaders");
@@ -44,17 +25,9 @@ public class Main extends Application {
         gameWindow.prefHeightProperty().bind(primaryStage.getScene().heightProperty());
 
 
-        playerEntity = new PlayerShip();
+        ShipEntity playerEntity = new PlayerShip();
         playerEntity.setPosition(gameWindow.getPrefWidth() / 2, gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
 
-
-        System.out.println(playerEntity.getLayoutX());
-        System.out.println(playerEntity.getLayoutY());
-
-        gameWindow.getChildren().add(playerEntity);
-
-
-        gameWindow.requestFocus();
         InputHandler.setHandlers(gameWindow);
 
         ShipEntity[][] enemyEntities = getEnemyShipEntities();
@@ -70,16 +43,18 @@ public class Main extends Application {
             y += entity[0].getEntityHeight() + SPACING_Y;
         }
 
-        GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity);
+        PointTracker tracker = new PointTracker(gameWindow);
 
+        gameWindow.getChildren().add(playerEntity);
+        gameWindow.getChildren().add(tracker);
+
+        GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker);
         GameRenderer gameRenderer = new GameRenderer(scene);
         gameRenderer.start();
 
-
+        gameWindow.requestFocus();
         primaryStage.show();
     }
-
-
 
     private ShipEntity[][] getEnemyShipEntities() {
         ShipEntity[][] enemyEntities = new ShipEntity[6][10];

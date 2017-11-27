@@ -13,15 +13,23 @@ public class GameScene {
     private ShotPool playerShots;
     private ShotPool enemyShots;
 
+    private PointTracker pointTracker;
+
     private ObjectPool<ShipEntity> ships;
 
-    public GameScene(Pane gameWindow, ShipEntity[][] enemies, ShipEntity player) {
+    public GameScene(Pane gameWindow, ShipEntity[][] enemies, ShipEntity player, PointTracker tracker) {
         window = gameWindow;
         enemyEntities = enemies;
         playerEntity = player;
+        pointTracker = tracker;
+
 
         playerShots = new ShotPool(new PlayerShot(), 100, window);
         enemyShots = new ShotPool(new EnemyShot(), 100, window);
+    }
+
+    public PointTracker getPointTracker() {
+        return pointTracker;
     }
 
     public Pane getWindow() {

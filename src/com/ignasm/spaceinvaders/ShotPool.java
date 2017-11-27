@@ -45,9 +45,18 @@ public class ShotPool extends ObjectPool<Entity> {
         }
     }
 
+    public void releaseObjects(Entity[] objects) {
+        Arrays.stream(objects).forEach(this::releaseObject);
+    }
+
     public void moveShots(int yChange) {
         getActiveObjects().forEach(entity -> entity.moveY(yChange));
         removeOutOfBounds();
+    }
+
+    public Entity[] collidesWith(Entity entity) {
+        return getActiveObjects().stream()
+                .filter(entity::isCollidingWith).toArray(Entity[]::new);
     }
 
     private void removeOutOfBounds() {

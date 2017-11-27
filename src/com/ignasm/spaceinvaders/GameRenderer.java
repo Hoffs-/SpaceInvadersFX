@@ -3,55 +3,32 @@ package com.ignasm.spaceinvaders;
 import com.ignasm.spaceinvaders.entities.Entity;
 import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.animation.AnimationTimer;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.scene.image.ImageView;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GameRenderer extends AnimationTimer {
-    private static final int SHOT_SPEED = 3;
+    private static final int GAME_SPEED = 3;
     private static final long PLAYER_SHOT_INTERVAL = 1_000_000_000;
     private static final long ENEMY_SHOT_INTERVAL = 750_000_000;
 
-    private int direction = 1;
     private long playerLastShot = 0;
     private long enemyLastShot = 0;
 
-    private Pane gameWindow;
-
-    private int pointTracker = 0;
-
-    private Text pointText = new Text();
-
     private GameScene gameScene;
-
-    private final double OFFSET_X = 50;
-    private final double OFFSET_Y = 12;
-    private final double SPACING_X = 10;
-    private final double SPACING_Y = 10;
-
-    // private ShipEntity[][] enemyEntities = new ShipEntity[6][10];
-    private List<Entity> playerShots = new ArrayList<>();
-    private List<Entity> enemyShots = new ArrayList<>();
+    private int enemiesDirection = 1;
 
     public GameRenderer(GameScene gameScene) {
         this.gameScene = gameScene;
-        this.gameWindow = gameScene.getWindow();
-        setupPointText();
-    }
-
-    private void setupPointText() {
-        pointText = new Text("Score: " + pointTracker);
-        pointText.setFont(new Font("Consolas", 30));
-        pointText.setFill(Color.WHITE);
-        gameWindow.getChildren().add(pointText);
     }
 
     @Override
@@ -66,12 +43,13 @@ public class GameRenderer extends AnimationTimer {
         }
 
         updateEnemyShots();
+        checkEnemyShots();
 
 
         updatePlayerShots();
-        // checkPlayerShots();
+        checkPlayerShots();
 
-        updateScore();
+        gameScene.getPointTracker().update();
 
         /*
         if (pointTracker == (enemyEntities.length * enemyEntities[0].length)) {
@@ -80,32 +58,30 @@ public class GameRenderer extends AnimationTimer {
         */
     }
 
-    private void updateEnemyShots() {
-        gameScene.getEnemyShots().moveShots(SHOT_SPEED);
-
-        /*
-        if (checkEnemyHit(shot)) { // Game over
+    private void checkEnemyShots() {
+        ShotPool enemyShots = gameScene.getEnemyShots();
+        Entity[] entities = enemyShots.collidesWith(gameScene.getPlayer());
+        if (entities.length > 0) {
             setGameOverText();
             this.stop();
         }
-        */
     }
 
-    private boolean isOutOfBounds(ImageView object) {
-        return object.getLayoutY() > gameWindow.getHeight() || object.getLayoutX() > gameWindow.getWidth()
-                || object.getLayoutY() < 0 || object.getLayoutX() < 0;
-    }
-
-    private boolean checkEnemyHit(ImageView shot) {
-        Entity player = gameScene.getPlayer();
-        Bounds playerShipBounds = new BoundingBox(player.getLayoutX(), player.getLayoutY(), player.getEntityWidth(), player.getEntityHeight());
-        Bounds enemyShotBounds = new BoundingBox(shot.getLayoutX(), shot.getLayoutY(), shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
-        return playerShipBounds.intersects(enemyShotBounds);
+    private void updateEnemyShots() {
+        gameScene.getEnemyShots().moveShots(GAME_SPEED);
     }
 
     private void handleUserAction(long now) {
-        int playerMove = InputHandler.getInstance().getMovementDirection().getValue() * 3;
+        Entity player = gameScene.getPlayer();
+        Pane window = gameScene.getWindow();
+
+        int playerMove = InputHandler.getInstance().getMovementDirection().getValue() * GAME_SPEED;
         gameScene.getPlayer().moveX(playerMove);
+
+        if (player.isPartiallyOutOfBounds(window)) {
+            double newX = (player.getLayoutX() > 0) ? window.getWidth() - player.getEntityWidth() : 0;
+            player.setLayoutX(newX);
+        }
 
         if (InputHandler.getInstance().isShooting() && canShoot(now)) {
             playerLastShot = now;
@@ -123,6 +99,7 @@ public class GameRenderer extends AnimationTimer {
         shot.setPosition(player.getMiddleX() - (shot.getEntityWidth() / 2), player.getLayoutY() - shot.getEntityHeight());
     }
 
+    // TODO: Fix this
     private void addEnemyShot() {
         ShipEntity[][] enemies = gameScene.getEnemies();
         Entity shot = gameScene.getEnemyShots().acquireObject();
@@ -146,7 +123,9 @@ public class GameRenderer extends AnimationTimer {
         }
     }
 
+    // TODO: FIX THIS
     private void setGameOverText() {
+        Pane gameWindow = gameScene.getWindow();
         Text winnerText = new Text("Winner");
         winnerText.setFill(Color.GREEN);
         winnerText.setFont(new Font("Roboto", 30));
@@ -155,54 +134,46 @@ public class GameRenderer extends AnimationTimer {
         gameWindow.getChildren().add(winnerText);
     }
 
-    private void updateScore() {
-        pointText.setText("Score: " + pointTracker);
-        pointText.setLayoutX(gameWindow.getPrefWidth() - pointText.getLayoutBounds().getWidth() - 10);
-        pointText.setLayoutY(pointText.getLayoutBounds().getHeight() + 5);
-    }
-
     private void checkPlayerShots() {
-        /*
-        ListIterator pShotIterator = playerShots.listIterator();
-        while (pShotIterator.hasNext()) {
-            Entity shot = (Entity) pShotIterator.next();
-            Bounds shotBounds = new BoundingBox(shot.getLayoutX(), shot.getLayoutY(), shot.getLayoutBounds().getWidth(), shot.getLayoutBounds().getHeight());
-            boolean wasHit = false;
+        List<ShipEntity> enemies = Arrays.stream(gameScene.getEnemies())
+                .flatMap(Arrays::stream)
+                .filter(shipEntity -> !shipEntity.isBlownUp())
+                .collect(Collectors.toList());
+        ShotPool playerShots = gameScene.getPlayerShots();
 
-            startLoop:
-            for (ShipEntity[] rowEntities : gameScene.getEnemies()) {
-                for (ShipEntity entity : rowEntities) {
-                    Bounds shipBounds = new BoundingBox(entity.getLayoutX(), entity.getLayoutY(), entity.getEntityWidth(), entity.getEntityHeight());
-                    if (shipBounds.intersects(shotBounds) && !entity.isBlownUp()) {
-                        entity.blowUp();
-                        gameWindow.getChildren().remove(entity);
-                        wasHit = true;
-                        pointTracker++;
-                        break startLoop;
-                    }
-                }
-            }
+        for (ShipEntity enemy : enemies) {
+            Entity[] shots = playerShots.collidesWith(enemy);
+            if (shots.length > 0) {
+                playerShots.releaseObjects(shots);
+                enemy.blowUp();
 
-            if (wasHit) {
-                pShotIterator.remove();
-                gameWindow.getChildren().remove(shot);
+                gameScene.getPointTracker().addPoint();
+
+                new Timeline(
+                        new KeyFrame(
+                                Duration.millis(350),
+                                event -> gameScene.getWindow().getChildren().remove(enemy)
+                        )
+                ).play();
             }
-        }*/
+        }
     }
 
     private void updatePlayerShots() {
-        gameScene.getPlayerShots().moveShots(-1 * SHOT_SPEED);
+        gameScene.getPlayerShots().moveShots(-1 * GAME_SPEED);
     }
 
+    // TODO: Rethink this
     private int getMovementDirection() {
+        Pane gameWindow = gameScene.getWindow();
         ShipEntity firstShip = gameScene.getEnemies()[0][0];
         ShipEntity lastShip = gameScene.getEnemies()[gameScene.getEnemyRows() - 1][gameScene.getEnemyColumns() - 1];
 
         if (firstShip.getMinX() <= 0 || lastShip.getMaxX() >= gameWindow.getWidth()) {
-            direction *= -1;
+            enemiesDirection *= -1;
         }
 
-        return direction;
+        return enemiesDirection;
     }
 
     private void moveEnemyShips(int direction) {

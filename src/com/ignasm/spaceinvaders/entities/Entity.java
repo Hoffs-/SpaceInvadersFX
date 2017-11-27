@@ -82,6 +82,13 @@ public class Entity extends ImageView {
                 getLayoutY() > window.getHeight();
     }
 
+    public boolean isPartiallyOutOfBounds(Pane window) {
+        return getMinX() < 0 ||
+                getMaxX() > window.getWidth() ||
+                getLayoutY() < 0 ||
+                getLayoutY() + getEntityHeight() > window.getHeight();
+    }
+
     public void moveX(int move) {
         setLayoutX(getLayoutX() + move);
     }
@@ -105,5 +112,9 @@ public class Entity extends ImageView {
 
     public double getMiddleX() {
         return getLayoutX() + (getEntityWidth() / 2);
+    }
+
+    public boolean isCollidingWith(Entity entity) {
+        return getBoundsInParent().intersects(entity.getBoundsInParent());
     }
 }
