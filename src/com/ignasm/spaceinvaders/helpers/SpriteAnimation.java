@@ -56,4 +56,10 @@ public class SpriteAnimation extends Transition {
     public void startSprite() {
         setCycleDuration(realDuration);
     }
+
+    @Override
+    public void stop() {
+        super.stop();
+        imageView.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
+    }
 }
