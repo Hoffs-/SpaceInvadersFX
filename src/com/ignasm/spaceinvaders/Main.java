@@ -24,7 +24,6 @@ public class Main extends Application {
         gameWindow.prefWidthProperty().bind(primaryStage.getScene().widthProperty());
         gameWindow.prefHeightProperty().bind(primaryStage.getScene().heightProperty());
 
-
         ShipEntity playerEntity = new PlayerShip();
         playerEntity.setPosition(gameWindow.getPrefWidth() / 2, gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
 
@@ -49,11 +48,11 @@ public class Main extends Application {
         gameWindow.getChildren().add(tracker);
 
         GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker);
-        GameRenderer gameRenderer = new GameRenderer(scene);
-        gameRenderer.start();
+        GameLoop gameLoop = new GameLoop(scene);
 
         gameWindow.requestFocus();
         primaryStage.show();
+        gameLoop.start();
     }
 
     private ShipEntity[][] getEnemyShipEntities() {
@@ -61,7 +60,7 @@ public class Main extends Application {
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < enemyEntities[i].length; j++) {
-                enemyEntities[i][j] = new EnemyOne();
+                enemyEntities[i][j] = new EnemyThree();
             }
         }
 
@@ -73,7 +72,7 @@ public class Main extends Application {
 
         for (int i = 4; i < 6; i++) {
             for (int j = 0; j < enemyEntities[i].length; j++) {
-                enemyEntities[i][j] = new EnemyThree();
+                enemyEntities[i][j] = new EnemyOne();
             }
         }
         return enemyEntities;
