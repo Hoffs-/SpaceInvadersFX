@@ -8,8 +8,8 @@ package com.ignasm.spaceinvaders;
 public abstract class ObjectPool<T> {
     private final FixedLinkedList<T> releasedObjects;
     private final FixedLinkedList<T> activeObjects;
-
     private final int poolSize;
+
     public ObjectPool(int size) {
         poolSize = size;
         releasedObjects = new FixedLinkedList<>(size);
