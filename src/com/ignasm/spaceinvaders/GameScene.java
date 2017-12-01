@@ -5,6 +5,8 @@ import com.ignasm.spaceinvaders.entities.PlayerShot;
 import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.scene.layout.Pane;
 
+import java.util.Arrays;
+
 public class GameScene {
     private Pane window;
     private ShipEntity[][] enemyEntities; // [6][10]
@@ -14,8 +16,6 @@ public class GameScene {
     private ShotPool enemyShots;
 
     private PointTracker pointTracker;
-
-    private ObjectPool<ShipEntity> ships;
 
     public GameScene(Pane gameWindow, ShipEntity[][] enemies, ShipEntity player, PointTracker tracker) {
         window = gameWindow;
@@ -58,6 +58,13 @@ public class GameScene {
 
     public int getEnemyColumns() {
         return (enemyEntities.length > 0) ? enemyEntities[0].length : 0;
+    }
+
+    public int getEnemiesLeft() {
+        return (int) Arrays.stream(enemyEntities)
+                .flatMap(Arrays::stream)
+                .filter(enemy -> !enemy.isBlownUp())
+                .count();
     }
 
     /*

@@ -8,7 +8,9 @@ package com.ignasm.spaceinvaders.helpers;
 public enum MovementDirection {
     LEFT(-1),
     RIGHT(1),
-    STILL(0);
+    STILL(0),
+    UP(-1),
+    DOWN(1);
 
     private int value;
 
