@@ -1,6 +1,7 @@
 package com.ignasm.spaceinvaders;
 
 import com.ignasm.spaceinvaders.entities.Entity;
+import com.ignasm.spaceinvaders.entities.ShipEntity;
 import javafx.scene.layout.Pane;
 
 import java.util.Arrays;
@@ -73,5 +74,14 @@ public class ShotPool extends ObjectPool<Entity> {
                 dummyEntity.getEntityHeight(),
                 dummyEntity.getAnimationDuration()
         );
+    }
+
+    public static void addShot(ShotPool pool, ShipEntity origin) {
+        Entity shot = pool.acquireObject();
+        shot.setPosition(origin.getMiddleX() - (shot.getEntityWidth() / 2), origin.getLayoutY() + origin.getEntityHeight());
+    }
+
+    public void clear() {
+        releaseObjects(getActiveObjects().toArray(new Entity[getActiveObjects().size()]));
     }
 }

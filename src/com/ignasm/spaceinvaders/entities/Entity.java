@@ -18,14 +18,22 @@ public class Entity extends ImageView {
     private int entityWidth;
     private int entityHeight;
 
+    private Image originalImage;
+
     public Entity(Image image, int w, int h, Duration duration) {
+        originalImage = image;
         setImage(image);
+
         entityWidth = w;
         entityHeight = h;
         animationDuration = duration;
 
         objectAnimation = setupAnimation(w, h, duration);
         startAnimation();
+    }
+
+    Image getOriginalImage() {
+        return originalImage;
     }
 
     public Duration getAnimationDuration() {

@@ -1,5 +1,6 @@
 package com.ignasm.spaceinvaders;
 
+import com.ignasm.spaceinvaders.commands.Command;
 import com.ignasm.spaceinvaders.entities.Entity;
 import com.ignasm.spaceinvaders.entities.ShipEntity;
 import com.ignasm.spaceinvaders.helpers.MovementDirection;
@@ -16,25 +17,26 @@ import java.util.stream.Collectors;
 
 public class GameLoop extends AnimationTimer {
     private static final int GAME_SPEED = 3;
-    private static final long PLAYER_SHOT_INTERVAL = 1_000_000_000;
     private static final long ENEMY_SHOT_INTERVAL = 750_000_000;
 
-    private long playerLastShot = 0;
     private long enemyLastShot = 0;
 
     private int enemiesDirection = 1;
 
     private GameScene scene;
+    private InputHandler inputHandler;
 
-    public GameLoop(GameScene gameScene) {
+    public GameLoop(GameScene gameScene, InputHandler inputHandler) {
         scene = gameScene;
+        this.inputHandler = inputHandler;
     }
 
     @Override
     public void handle(long now) {
         moveEnemyShips(getMovementDirection());
 
-        handleUserAction(now);
+        Arrays.stream(inputHandler.getCommands(now)).forEach(Command::execute);
+        fixPlayerPosition();
 
         if (canEnemyShoot(now)) {
             enemyLastShot = now;
@@ -90,29 +92,16 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
-    private void handleUserAction(long now) {
+    private void fixPlayerPosition() {
         Entity player = scene.getPlayer();
         Pane window = scene.getWindow();
-
-        // Maybe use commands? getMovementCommand + getActionCommand(Shooting)? Maybe redundant/unpractical...
-
-        int playerMove = InputHandler.getInstance().getMovementDirection().getValue() * GAME_SPEED;
-        scene.getPlayer().moveX(playerMove);
 
         if (player.isPartiallyOutOfBounds(window)) {
             double newX = (player.getLayoutX() > 0) ? window.getWidth() - player.getEntityWidth() : 0;
             player.setLayoutX(newX);
         }
-
-        if (InputHandler.getInstance().isShooting() && canPlayerShoot(now)) {
-            playerLastShot = now;
-            addShot(scene.getPlayerShots(), scene.getPlayer());
-        }
     }
 
-    private boolean canPlayerShoot(long now) {
-        return now - playerLastShot > PLAYER_SHOT_INTERVAL;
-    }
 
     private boolean canEnemyShoot(long now) {
         return now - enemyLastShot > ENEMY_SHOT_INTERVAL;
@@ -122,12 +111,7 @@ public class GameLoop extends AnimationTimer {
         Random rand = new Random();
         ShipEntity[] enemies = getBottomEnemies();
         ShipEntity enemy = enemies[rand.nextInt(enemies.length)];
-        addShot(scene.getEnemyShots(), enemy);
-    }
-
-    private void addShot(ShotPool pool, ShipEntity from) {
-        Entity shot = pool.acquireObject();
-        shot.setPosition(from.getMiddleX() - (shot.getEntityWidth() / 2), from.getLayoutY() + from.getEntityHeight());
+        ShotPool.addShot(scene.getEnemyShots(), enemy);
     }
 
     private ShipEntity[] getBottomEnemies() {

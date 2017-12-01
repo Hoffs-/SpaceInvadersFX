@@ -36,4 +36,12 @@ public class PointTracker extends Text {
     public void addPoints(int points) {
         pointCount += points;
     }
+
+    public int getPoints() {
+        return pointCount;
+    }
+
+    public void setPoints(int points) {
+        pointCount = points;
+    }
 }

@@ -14,7 +14,7 @@ public class Main extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         Pane gameWindow = new Pane();
 
         primaryStage.setScene(new Scene(gameWindow, 730, 730));
@@ -26,8 +26,6 @@ public class Main extends Application {
 
         ShipEntity playerEntity = new PlayerShip();
         playerEntity.setPosition(gameWindow.getPrefWidth() / 2, gameWindow.getPrefHeight() - playerEntity.getEntityHeight() - OFFSET_Y);
-
-        InputHandler.setHandlers(gameWindow);
 
         ShipEntity[][] enemyEntities = getEnemyShipEntities();
         double y = enemyEntities[0][0].getEntityHeight() + SPACING_Y;
@@ -47,8 +45,9 @@ public class Main extends Application {
         gameWindow.getChildren().add(playerEntity);
         gameWindow.getChildren().add(tracker);
 
-        GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker);
-        GameLoop gameLoop = new GameLoop(scene);
+        GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker, 3);
+        InputHandler inputHandler = new InputHandler(scene);
+        GameLoop gameLoop = new GameLoop(scene, inputHandler);
 
         gameWindow.requestFocus();
         primaryStage.show();

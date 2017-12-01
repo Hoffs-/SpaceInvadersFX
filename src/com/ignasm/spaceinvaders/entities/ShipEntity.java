@@ -28,4 +28,18 @@ public abstract class ShipEntity extends Entity implements Explosive {
     public boolean isBlownUp() {
         return blownUp;
     }
+
+    public ShipMemento getMemento() {
+        return new ShipMemento(getLayoutX(), getLayoutY(), isBlownUp());
+    }
+
+    public void setMemento(ShipMemento memento) {
+        setPosition(memento.getX(), memento.getY());
+        blownUp = memento.isBlownUp();
+
+        if (!isBlownUp()) {
+            setImage(getOriginalImage());
+            startAnimation();
+        }
+    }
 }
