@@ -65,7 +65,7 @@ public class GameLogic {
     }
 
     private void checkEnemyShots() {
-        int collisionCount = checkCollisions(scene.getEnemyShots(), new ShipEntity[]{scene.getPlayer()});
+        int collisionCount = checkCollisions(scene.getEnemyShots(), scene.getPlayer());
 
         if (collisionCount > 0) {
             setGameOverText(GameStatus.LOST);
@@ -101,7 +101,7 @@ public class GameLogic {
         scene.getPointTracker().addPoints(collisionCount);
     }
 
-    private int checkCollisions(ShotPool pool, ShipEntity[] ships) {
+    private int checkCollisions(ShotPool pool, ShipEntity... ships) {
         int collisionCount = 0;
         for (ShipEntity ship : ships) {
             if (ship.isBlownUp()) continue;
