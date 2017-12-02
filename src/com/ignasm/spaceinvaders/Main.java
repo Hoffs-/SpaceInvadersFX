@@ -12,7 +12,6 @@ public class Main extends Application {
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
-
     @Override
     public void start(Stage primaryStage) {
         Pane gameWindow = new Pane();
@@ -47,7 +46,8 @@ public class Main extends Application {
 
         GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker, 3);
         InputHandler inputHandler = new InputHandler(scene);
-        GameLoop gameLoop = new GameLoop(scene, inputHandler);
+        GameLogic logic = new GameLogic(scene, inputHandler, 3);
+        GameLoop gameLoop = new GameLoop(logic);
 
         gameWindow.requestFocus();
         primaryStage.show();
@@ -76,7 +76,6 @@ public class Main extends Application {
         }
         return enemyEntities;
     }
-
 
     public static void main(String[] args) {
         launch(args);

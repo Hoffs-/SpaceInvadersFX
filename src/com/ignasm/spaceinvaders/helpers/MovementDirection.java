@@ -21,4 +21,11 @@ public enum MovementDirection {
     public int getValue() {
         return value;
     }
+
+    public static MovementDirection getByValue(int value) {
+        for (MovementDirection movementDirection : MovementDirection.values()) {
+            if (value == movementDirection.value) return movementDirection;
+        }
+        return null;
+    }
 }
