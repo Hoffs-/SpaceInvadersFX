@@ -46,7 +46,7 @@ public class Main extends Application {
 
         GameScene scene = new GameScene(gameWindow, enemyEntities, playerEntity, tracker, 3);
         InputHandler inputHandler = new InputHandler(scene);
-        GameLogic logic = new GameLogic(scene, inputHandler, 3);
+        GameLogic logic = new GameLogic(scene, inputHandler);
         GameLoop gameLoop = new GameLoop(logic);
 
         gameWindow.requestFocus();

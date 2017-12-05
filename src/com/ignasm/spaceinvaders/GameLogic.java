@@ -19,13 +19,11 @@ public class GameLogic {
     private static final long ENEMY_SHOT_INTERVAL = 750_000_000;
     private GameScene scene;
     private InputHandler input;
-    private int gameSpeed = 3;
     private long enemyLastShot = 0;
 
-    public GameLogic(GameScene gameScene, InputHandler inputHandler, int initialSpeed) {
+    public GameLogic(GameScene gameScene, InputHandler inputHandler) {
         scene = gameScene;
         input = inputHandler;
-        gameSpeed = initialSpeed;
     }
 
     public boolean shouldStop() {
@@ -45,7 +43,7 @@ public class GameLogic {
 
     public void updateEnemies(long now) {
         moveEnemyShips(scene.getEnemyDirection());
-        scene.getEnemyShots().moveShots(MovementDirection.DOWN.getValue() * gameSpeed);
+        scene.getEnemyShots().moveShots(MovementDirection.DOWN.getValue() * scene.getGameSpeed());
 
         if (canEnemyShoot(now)) {
             enemyLastShot = now;
@@ -57,7 +55,7 @@ public class GameLogic {
     private void moveEnemyShips(MovementDirection direction) {
         Arrays.stream(scene.getEnemies()).flatMap(Arrays::stream)
                 .filter(Objects::nonNull)
-                .forEach(ship -> ship.moveX(direction.getValue()));
+                .forEach(ship -> ship.moveX(direction.getValue() * (scene.getGameSpeed() / 2)));
     }
 
     private boolean canEnemyShoot(long now) {
@@ -83,7 +81,7 @@ public class GameLogic {
     public void updatePlayer(long now) {
         executePlayerCommands(now);
         fixPlayerPosition();
-        scene.getPlayerShots().moveShots(MovementDirection.UP.getValue() * gameSpeed);
+        scene.getPlayerShots().moveShots(MovementDirection.UP.getValue() * scene.getGameSpeed());
         checkPlayerShots();
     }
 
