@@ -75,7 +75,7 @@ public class GameLogic {
         Random rand = new Random();
         ShipEntity[] enemies = scene.getBottomEnemies();
         ShipEntity enemy = enemies[rand.nextInt(enemies.length)];
-        ShotPool.addShot(scene.getEnemyShots(), enemy);
+        scene.getEnemyShots().addShot(enemy);
     }
 
     public void updatePlayer(long now) {

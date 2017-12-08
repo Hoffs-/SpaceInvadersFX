@@ -12,6 +12,10 @@ public class Main extends Application {
     private final double SPACING_X = 10;
     private final double SPACING_Y = 10;
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Pane gameWindow = new Pane();
@@ -75,9 +79,5 @@ public class Main extends Application {
             }
         }
         return enemyEntities;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

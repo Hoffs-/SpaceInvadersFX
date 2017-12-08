@@ -26,6 +26,14 @@ public abstract class ObjectPool<T> {
         return releasedObjects.size() + activeObjects.size();
     }
 
+    public int getActiveCount() {
+        return activeObjects.size();
+    }
+
+    public int getReleasedCount() {
+        return releasedObjects.size();
+    }
+
     public FixedLinkedList<T> getActiveObjects() {
         return activeObjects;
     }

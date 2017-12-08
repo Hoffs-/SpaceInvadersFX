@@ -9,7 +9,8 @@ import java.util.LinkedList;
  * PRIf-15/1
  */
 public class FixedLinkedList<T> extends LinkedList<T> {
-    private int sizeLimit = 0;
+    private int sizeLimit;
+
     public FixedLinkedList(int size) {
         sizeLimit = size;
     }

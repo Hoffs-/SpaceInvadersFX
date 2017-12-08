@@ -13,6 +13,6 @@ public class PlayerShootCommand extends PlayerActionCommand {
 
     @Override
     public void execute() {
-        ShotPool.addShot(pool, getPlayer());
+        pool.addShot(getPlayer());
     }
 }

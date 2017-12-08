@@ -61,7 +61,7 @@ public class ShotPool extends ObjectPool<Entity> {
     }
 
     private void removeOutOfBounds() {
-        Entity[] toRemove =  getActiveObjects().stream()
+        Entity[] toRemove = getActiveObjects().stream()
                 .filter(entity -> entity.isOutOfBounds(window))
                 .toArray(Entity[]::new);
         Arrays.stream(toRemove).forEach(this::releaseObject);
@@ -76,8 +76,8 @@ public class ShotPool extends ObjectPool<Entity> {
         );
     }
 
-    public static void addShot(ShotPool pool, ShipEntity origin) {
-        Entity shot = pool.acquireObject();
+    public void addShot(ShipEntity origin) {
+        Entity shot = acquireObject();
         shot.setPosition(origin.getMiddleX() - (shot.getEntityWidth() / 2), origin.getLayoutY() + origin.getEntityHeight());
     }
 
