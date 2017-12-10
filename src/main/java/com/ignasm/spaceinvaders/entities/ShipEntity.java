@@ -10,10 +10,10 @@ import javafx.util.Duration;
  * 20153209
  * PRIf-15/1
  */
-public abstract class ShipEntity extends Entity implements Explosive {
+public class ShipEntity extends Entity implements Explosive {
     private boolean blownUp = false;
 
-    ShipEntity(Image image, int w, int h, Duration duration) {
+    public ShipEntity(Image image, int w, int h, Duration duration) {
         super(image, w, h, duration);
     }
 
