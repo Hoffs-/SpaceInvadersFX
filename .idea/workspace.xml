@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Moved level generation out of main and made shipentity not abstract.">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ignasm/spaceinvaders/LevelBuilder.java" afterPath="$PROJECT_DIR$/src/main/java/com/ignasm/spaceinvaders/LevelBuilder.java" />
     </list>
@@ -72,8 +72,8 @@
       <file leaf-file-name="workspace.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22344">
-              <caret line="936" column="14" lean-forward="false" selection-start-line="936" selection-start-column="14" selection-end-line="936" selection-end-column="14" />
+            <state relative-caret-position="22536">
+              <caret line="944" column="14" lean-forward="false" selection-start-line="944" selection-start-column="14" selection-end-line="944" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -94,8 +94,8 @@
       <file leaf-file-name="LevelBuilder.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ignasm/spaceinvaders/LevelBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="27" column="57" lean-forward="true" selection-start-line="27" selection-start-column="57" selection-end-line="27" selection-end-column="57" />
+            <state relative-caret-position="588">
+              <caret line="35" column="61" lean-forward="false" selection-start-line="35" selection-start-column="61" selection-end-line="35" selection-end-column="61" />
               <folding />
             </state>
           </provider>
@@ -741,7 +741,7 @@
       <workItem from="1512299884982" duration="50000" />
       <workItem from="1512736185478" duration="26040000" />
       <workItem from="1512908725147" duration="1140000" />
-      <workItem from="1512988970790" duration="4688000" />
+      <workItem from="1512988970790" duration="4739000" />
     </task>
     <task id="LOCAL-00001" summary="Moved animationtimer and scene to their own classes.">
       <created>1510494809824</created>
@@ -834,7 +834,14 @@
       <option name="project" value="LOCAL" />
       <updated>1512749029614</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Made custom level builder more powerful by being able to specify multiple entities for levels.">
+      <created>1513006069524</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1513006069524</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -867,7 +874,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116065000" />
+    <option name="totallyTimeSpent" value="116116000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -933,7 +940,8 @@
     <MESSAGE value="Fixed proper use of varargs" />
     <MESSAGE value="Restructured for Maven and added 3 tests." />
     <MESSAGE value="Moved level generation out of main and made shipentity not abstract." />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved level generation out of main and made shipentity not abstract." />
+    <MESSAGE value="Made custom level builder more powerful by being able to specify multiple entities for levels." />
+    <option name="LAST_COMMIT_MESSAGE" value="Made custom level builder more powerful by being able to specify multiple entities for levels." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -1009,8 +1017,8 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ignasm/spaceinvaders/entities/ShipEntity.java" />
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22344">
-          <caret line="936" column="14" lean-forward="false" selection-start-line="936" selection-start-column="14" selection-end-line="936" selection-end-column="14" />
+        <state relative-caret-position="22536">
+          <caret line="944" column="14" lean-forward="false" selection-start-line="944" selection-start-column="14" selection-end-line="944" selection-end-column="14" />
           <folding />
         </state>
       </provider>
@@ -1043,8 +1051,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ignasm/spaceinvaders/LevelBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="27" column="57" lean-forward="true" selection-start-line="27" selection-start-column="57" selection-end-line="27" selection-end-column="57" />
+        <state relative-caret-position="588">
+          <caret line="35" column="61" lean-forward="false" selection-start-line="35" selection-start-column="61" selection-end-line="35" selection-end-column="61" />
           <folding />
         </state>
       </provider>

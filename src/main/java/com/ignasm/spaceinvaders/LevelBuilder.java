@@ -35,7 +35,6 @@ public class LevelBuilder {
             for (int i = k * sliceSize; i < Math.min(enemyEntities.length, (k * sliceSize) + sliceSize); i++) {
                 for (int j = 0; j < enemyEntities[i].length; j++) {
                     enemyEntities[i][j] = new ShipEntity(entities[k].getImage(), entities[k].getEntityWidth(), entities[k].getEntityHeight(), entities[k].getAnimationDuration());
-                    System.out.println(k + " [" + i + "][" + j + "]");
                 }
             }
         }
